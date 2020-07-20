@@ -37,7 +37,7 @@ public class UserRestController {
             var savedUser = userService.saveUser(user);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", user.getId().toString());
+            headers.add("Location", savedUser.getId().toString());
 
             return new ResponseEntity(headers, HttpStatus.CREATED);
         }
