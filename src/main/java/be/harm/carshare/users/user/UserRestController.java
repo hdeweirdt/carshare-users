@@ -1,6 +1,8 @@
 package be.harm.carshare.users.user;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,11 +30,16 @@ public class UserRestController {
     }
 
     @PostMapping("")
-    public User registerUser(@Valid User user, BindingResult bindingResult) {
+    public ResponseEntity registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         } else {
-            return userService.saveUser(user);
+            var savedUser = userService.saveUser(user);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", user.getId().toString());
+
+            return new ResponseEntity(headers, HttpStatus.CREATED);
         }
     }
 }

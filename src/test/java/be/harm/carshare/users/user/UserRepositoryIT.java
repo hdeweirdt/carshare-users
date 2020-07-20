@@ -25,7 +25,7 @@ public class UserRepositoryIT {
     @Test
     void usersShouldGetHaveAllRolesWhenLoaded() {
         // Given
-        User user = new User("UserName1", "Wachtwoor1");
+        User user = User.builder().userName("Username").password("Wachtwoord1").build();
         user.setRoles(SetUtils.hashSet(ApplicationRole.ADMIN, ApplicationRole.USER));
         User savedUser = userRepository.save(user);
 

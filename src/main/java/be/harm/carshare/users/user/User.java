@@ -30,6 +30,7 @@ public class User {
     private String userName;
 
     @Getter
+    @Setter
     @NotNull
     @Size(min = 8, message = "Password must contain at least " + MIN_PASSWORD_LENGTH + " characters")
     @Pattern.List({
@@ -64,36 +65,7 @@ public class User {
     private Set<ApplicationRole> roles = new HashSet<>();
 
     public User(String userName, String password) {
-        setUserName(userName);
-        setPassword(password);
-    }
-
-    public void setUserName(String userName) {
-        if (userName == null || userName.isEmpty()) {
-            throw new IllegalArgumentException("Empty username");
-        }
-        if (userName.length() < MIN_USERNAME_LENGTH) {
-            throw new IllegalArgumentException("Username must be " + MIN_USERNAME_LENGTH + " characters long");
-        }
         this.userName = userName;
-    }
-
-    public void setPassword(String password) {
-        if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (password.length() < MIN_PASSWORD_LENGTH) {
-            throw new IllegalArgumentException("Password must be " + MIN_PASSWORD_LENGTH + " characters long");
-        }
-        if (password.toLowerCase().equals(password)) {
-            throw new IllegalArgumentException("Password must contain at least 1 upper case character");
-        }
-        if (password.toUpperCase().equals(password)) {
-            throw new IllegalArgumentException("Password must contain at least 1 lower case character");
-        }
-        if (!password.matches(".*\\d.*")) {
-            throw new IllegalArgumentException("Password must contain at least 1 number");
-        }
         this.password = password;
     }
 }
