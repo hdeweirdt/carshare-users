@@ -1,6 +1,5 @@
 package be.harm.carshare.users.user;
 
-import be.harm.carshare.users.user.UserRepository;
 import be.harm.carshare.users.user.security.ApplicationRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
