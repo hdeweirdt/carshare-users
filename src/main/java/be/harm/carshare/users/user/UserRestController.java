@@ -1,14 +1,18 @@
 package be.harm.carshare.users.user;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Set;
+
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("users")
@@ -20,26 +24,33 @@ public class UserRestController {
     }
 
     @GetMapping("")
-    public Set<User> getUsers() {
-        return userService.findAll();
+    public ResponseEntity<Set<User>> getUsers() {
+        return ok(userService.findAll());
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        return ok(userService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @PostMapping("")
-    public ResponseEntity registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<String> registerUser(
+            @Valid @RequestBody User user,
+            BindingResult bindingResult,
+            HttpServletRequest request
+    ) {
         if (bindingResult.hasErrors()) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } else {
             var savedUser = userService.saveUser(user);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Location", savedUser.getId().toString());
-
-            return new ResponseEntity(headers, HttpStatus.CREATED);
+            return created(ServletUriComponentsBuilder
+                    .fromContextPath(request)
+                    .path("users/{id}")
+                    .buildAndExpand(savedUser.getId().toString())
+                    .toUri())
+                    .build();
         }
     }
 }

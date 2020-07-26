@@ -18,7 +18,7 @@ class SecurityConfig {
     public static class MethodSecurityConfig extends GlobalMethodSecurityConfiguration { }
 
     @Configuration
-    @Order(1)
+    @Order(2)
     static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         private static final String H2CONSOLE_LOCATION = "/h2-console/**";
 
