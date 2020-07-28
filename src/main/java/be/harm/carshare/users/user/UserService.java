@@ -11,4 +11,6 @@ public interface UserService {
     User saveUser(User user);
 
     User saveAdmin(User user);
+
+    User updateUser(User user);
 }

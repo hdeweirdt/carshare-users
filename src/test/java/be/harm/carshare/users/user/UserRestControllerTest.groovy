@@ -1,5 +1,6 @@
 package be.harm.carshare.users.user
 
+import be.harm.carshare.users.testutil.WithMockCustomUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,8 +12,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import spock.lang.Specification
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(UserRestController.class)
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserRestControllerTest extends Specification {
 
     @Autowired
-    ObjectMapper mapper;
+    ObjectMapper mapper
 
     @Autowired
     private MockMvc mockMvc
@@ -116,5 +116,52 @@ class UserRestControllerTest extends Specification {
         "Xander"  | "De Rycke" | "validusername" | "NoNumber"
         "Xander"  | "De Rycke" | "validusername" | "nocapitals"
 
+    }
+
+    @WithMockCustomUser(id = 1L)
+    def "the currently logged in user may update itself"() {
+        given: "An existing user"
+        User updatedUser = User.builder()
+                .id(1L)
+                .firstName("Xander")
+                .lastName("De Nieuwe Rycke")
+                .password("TetstPaswo21")
+                .userName("TTesttUser")
+                .build()
+        and: "a service that can update users"
+        1 * userService.updateUser(_ as User) >> { User user -> user }
+
+        when: "a puts an update to itself"
+        ResultActions request = mockMvc.perform(put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatedUser)))
+
+        then: "the update is OK"
+        request.andExpect(status().isOk())
+    }
+
+    @WithMockCustomUser(id = 2L)
+    def "the currently logged in user may not update other users"() {
+        given: "An existing user"
+        User updatedUser = User.builder()
+                .id(1L)
+                .firstName("Xander")
+                .lastName("De Nieuwe Rycke")
+                .password("TetstPaswo21")
+                .userName("TTesttUser")
+                .build()
+        and: "a service that can update users"
+        0 * userService.updateUser(_ as User) >> { User user -> user }
+
+        when: "a puts an update to another user"
+        ResultActions request = mockMvc.perform(put("/users/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(updatedUser)))
+
+        then: "the update is forbidden"
+        request.andExpect(status().isForbidden())
+
+        and: "no update was done"
+        0 * userService.updateUser(_ as User)
     }
 }

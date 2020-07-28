@@ -1,6 +1,8 @@
 package be.harm.carshare.users.user;
 
 import be.harm.carshare.users.user.security.ApplicationRole;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,11 @@ class UserJPAService implements UserService {
     public User saveAdmin(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(getDefaultAdminRoles());
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updateUser(User user) {
         return userRepository.save(user);
     }
 

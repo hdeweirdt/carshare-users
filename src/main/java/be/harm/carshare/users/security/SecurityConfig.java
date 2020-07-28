@@ -15,7 +15,8 @@ class SecurityConfig {
             prePostEnabled = true,
             securedEnabled = true,
             jsr250Enabled = true)
-    public static class MethodSecurityConfig extends GlobalMethodSecurityConfiguration { }
+    public static class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+    }
 
     @Configuration
     @Order(2)
@@ -37,9 +38,10 @@ class SecurityConfig {
         protected void configure(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.authorizeRequests()
                     .antMatchers(H2CONSOLE_LOCATION).permitAll()
-                    // TEMPORARILY PERMIT EVERYTHING, ADD SECURITY LATER
-                    .antMatchers("/**").permitAll();
-            httpSecurity.csrf().ignoringAntMatchers(H2CONSOLE_LOCATION);
+                    .anyRequest().authenticated()
+                    .and()
+                    .httpBasic();
+            httpSecurity.csrf().disable();
             httpSecurity.headers().frameOptions().sameOrigin();
         }
     }
