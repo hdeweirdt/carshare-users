@@ -1,5 +1,7 @@
 package be.harm.carshare.users.user
 
+
+import be.harm.carshare.users.security.authentication.token.TokenService
 import be.harm.carshare.users.testutil.WithMockCustomUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.spockframework.spring.SpringBean
@@ -28,6 +30,9 @@ class UserRestControllerTest extends Specification {
 
     @SpringBean
     private UserService userService = Mock()
+
+    @SpringBean
+    private TokenService tokenService = Mock()
 
     def "when getting an existing user it is returned"() {
         given: "the users exists in the system"
