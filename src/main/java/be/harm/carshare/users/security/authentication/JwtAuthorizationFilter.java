@@ -1,12 +1,10 @@
 package be.harm.carshare.users.security.authentication;
 
-import be.harm.carshare.users.security.authentication.token.JwtTokenService;
 import be.harm.carshare.users.security.authentication.token.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,11 +19,11 @@ import static be.harm.carshare.users.security.authentication.AuthenticationConst
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private final TokenService tokenService = new JwtTokenService();
+    private final TokenService tokenService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
         super(authenticationManager);
-        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+        this.tokenService = tokenService;
     }
 
     @Override

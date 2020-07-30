@@ -1,6 +1,5 @@
 package be.harm.carshare.users.security.authentication;
 
-import be.harm.carshare.users.security.authentication.token.JwtTokenService;
 import be.harm.carshare.users.security.authentication.token.TokenService;
 import be.harm.carshare.users.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +23,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
 
-    private final TokenService tokenService = new JwtTokenService();
+    private final TokenService tokenService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     @Override

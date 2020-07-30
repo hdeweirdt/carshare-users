@@ -5,7 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -15,7 +15,8 @@ import java.util.Optional;
 @Service
 public final class JwtTokenService implements TokenService {
 
-    private final String tokenSecret = "secret";
+    @Value("${carshare.users.jwt.secret}")
+    private String tokenSecret;
 
     @Override
     public String createToken(AuthenticatedUser user) {
@@ -48,11 +49,6 @@ public final class JwtTokenService implements TokenService {
         calendar.setTime(start);
         calendar.add(Calendar.DATE, 1);
         return calendar.getTime();
-    }
-
-    @Bean
-    public TokenService JwtTokenService() {
-        return new JwtTokenService();
     }
 }
 

@@ -2,6 +2,7 @@ package be.harm.carshare.users.security;
 
 import be.harm.carshare.users.security.authentication.JwtAuthenticationFilter;
 import be.harm.carshare.users.security.authentication.JwtAuthorizationFilter;
+import be.harm.carshare.users.security.authentication.token.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -34,9 +35,11 @@ class SecurityConfig {
         private static final String REGISTER_URL = "/users";
 
         private final UserDetailsService userDetailsService;
+        private final TokenService tokenService;
 
-        ApiSecurityConfig(UserDetailsService userDetailsService) {
+        ApiSecurityConfig(UserDetailsService userDetailsService, TokenService tokenService) {
             this.userDetailsService = userDetailsService;
+            this.tokenService = tokenService;
         }
 
         @Override
@@ -54,8 +57,8 @@ class SecurityConfig {
                     .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
                     .anyRequest().authenticated()
                     .and()
-                    .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                    .addFilter(new JwtAuthorizationFilter(authenticationManager()))
+                    .addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenService))
+                    .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         }
