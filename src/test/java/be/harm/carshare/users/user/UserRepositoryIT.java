@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,10 +34,10 @@ public class UserRepositoryIT {
         User savedUser = userRepository.save(user);
 
         // When
-        User foundUser = userRepository.findByUserName(savedUser.getUserName());
+        Optional<User> foundUser = userRepository.findByUserName(savedUser.getUserName());
 
         //Then
-        assertEquals(2,foundUser.getRoles().size());
+        assertEquals(2, foundUser.get().getRoles().size());
     }
 
 }

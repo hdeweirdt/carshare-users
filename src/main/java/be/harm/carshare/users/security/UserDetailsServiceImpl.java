@@ -1,5 +1,6 @@
 package be.harm.carshare.users.security;
 
+import be.harm.carshare.users.security.authentication.AuthenticatedUser;
 import be.harm.carshare.users.user.User;
 import be.harm.carshare.users.user.UserRepository;
 import org.springframework.context.annotation.Primary;
@@ -24,10 +25,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(userName);
-        if (user == null) {
-            throw new UsernameNotFoundException("Username " + userName + " not found.");
-        }
+        User user = userRepository.findByUserName(userName).orElseThrow(() ->
+                new UsernameNotFoundException("Username " + userName + " not found."));
+
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .flatMap(role -> role.getGrantedAuthorities().stream())
                 .collect(Collectors.toList());

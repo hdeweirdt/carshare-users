@@ -1,6 +1,6 @@
 package be.harm.carshare.users.testutil;
 
-import be.harm.carshare.users.security.AuthenticatedUser;
+import be.harm.carshare.users.security.authentication.AuthenticatedUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;

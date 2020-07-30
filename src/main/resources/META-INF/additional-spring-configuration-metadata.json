@@ -3,11 +3,17 @@
     {
       "name": "application.adminUserName",
       "type": "java.lang.String",
-      "description": "Username of the admin user"
-  },
+      "description": "Username of the admin user."
+    },
     {
       "name": "application.adminUserPassword",
       "type": "java.lang.String",
-      "description": "Password of the admin user"
+      "description": "Password of the admin user."
+    },
+    {
+      "name": "carshare.users.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret for jwt token encryption."
     }
-] }
+  ]
+}
