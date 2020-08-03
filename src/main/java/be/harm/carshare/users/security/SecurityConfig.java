@@ -49,8 +49,7 @@ class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity httpSecurity) throws Exception {
-            httpSecurity.cors().and().csrf().disable();
-            httpSecurity
+            httpSecurity.cors().and().csrf().disable()
                     .authorizeRequests()
                     .antMatchers(H2CONSOLE_LOCATION).permitAll()
                     .antMatchers(HttpMethod.POST, REGISTER_URL).permitAll()
@@ -60,7 +59,6 @@ class SecurityConfig {
                     .addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenService))
                     .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         }
 
         @Bean

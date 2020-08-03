@@ -34,6 +34,7 @@ class UserRestControllerTest extends Specification {
     @SpringBean
     private TokenService tokenService = Mock()
 
+    @WithMockCustomUser(id = 1L)
     def "when getting an existing user it is returned"() {
         given: "the users exists in the system"
         User user = User.builder()
@@ -54,6 +55,7 @@ class UserRestControllerTest extends Specification {
         request.andExpect(jsonPath("\$.id").value(1L))
     }
 
+    @WithMockCustomUser(id = 1L)
     def "when getting a non-existing user, not-found is returned"() {
         given: "the users does not exist in the system"
         userService.findById(1L) >> Optional.empty()

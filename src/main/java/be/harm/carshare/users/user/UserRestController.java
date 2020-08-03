@@ -3,7 +3,6 @@ package be.harm.carshare.users.user;
 import be.harm.carshare.users.security.authentication.AuthenticatedUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +38,7 @@ public class UserRestController {
 
 
     @PutMapping("/{id}")
-    @PreAuthorize("#user.getId() == #id")
+//    @PreAuthorize("#user.getId() == #id")
     public ResponseEntity<String> updateUser(
             @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long id,

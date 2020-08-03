@@ -24,7 +24,7 @@ public final class JwtTokenService implements TokenService {
         final Date now = new Date();
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withIssuedAt(new Date())
+                .withIssuedAt(now)
                 .withExpiresAt(getExpirationDate(now))
                 .sign(tokenEncryptionAlgorithm);
     }
