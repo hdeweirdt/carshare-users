@@ -59,7 +59,7 @@ class SecurityConfig {
                     .anyRequest().authenticated()
                     .and()
                     .addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenService))
-                    .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService))
+                    .addFilter(new JwtAuthorizationFilter(authenticationManager(), tokenService, userDetailsService))
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
 

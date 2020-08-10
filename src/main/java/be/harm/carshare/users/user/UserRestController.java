@@ -46,24 +46,18 @@ public class UserRestController {
     public ResponseEntity<String> updateUser(
             @AuthenticationPrincipal AuthenticatedUser user,
             @PathVariable Long id,
-            @Valid @RequestBody User updatedUser,
+            @RequestBody User updatedUser,
             BindingResult bindingResult,
             HttpServletRequest request
     ) {
-        if (!updatedUser.getId().equals(id)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can not update users other than yourself.");
-        }
-        if (bindingResult.hasErrors()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        } else {
-            var savedUser = userService.updateUser(updatedUser);
+        var savedUser = userService.updateUser(updatedUser);
 
-            return ok(ServletUriComponentsBuilder
-                    .fromContextPath(request)
-                    .path("users/{id}")
-                    .buildAndExpand(savedUser.getId().toString())
-                    .toUri().toString());
-        }
+        return ok(ServletUriComponentsBuilder
+                .fromContextPath(request)
+                .path("users/{id}")
+                .buildAndExpand(savedUser.getId().toString())
+                .toUri().toString());
+
     }
 
     @PostMapping("")
