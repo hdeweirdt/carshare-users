@@ -1,8 +1,11 @@
 package be.harm.carshare.users.user
 
-
+import be.harm.carshare.users.security.authentication.AuthenticatedUser
+import be.harm.carshare.users.security.authentication.token.JwtTokenService
 import be.harm.carshare.users.security.authentication.token.TokenService
 import be.harm.carshare.users.testutil.WithMockCustomUser
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import spock.lang.Specification
@@ -32,7 +36,11 @@ class UserRestControllerTest extends Specification {
     private UserService userService = Mock()
 
     @SpringBean
-    private TokenService tokenService = Mock()
+    private TokenService tokenService = new JwtTokenService()
+
+    def setup() {
+        ReflectionTestUtils.setField(tokenService, "tokenSecret", "testsecret")
+    }
 
     @WithMockCustomUser(id = 1L)
     def "when getting an existing user it is returned"() {
@@ -170,5 +178,40 @@ class UserRestControllerTest extends Specification {
 
         and: "no update was done"
         0 * userService.updateUser(_ as User)
+    }
+
+    def "it can verify a given valid JWT"() {
+        given: "A valid JWT"
+        String token = tokenService.createToken(new AuthenticatedUser("User", "Password", 1L))
+
+        when: "the controller is asked to verify it"
+        ResultActions request = mockMvc.perform(post("/users/verify")
+                .param("token", token))
+
+        then: "the JWT is considered valid by the controller"
+        request.andExpect(status().isOk())
+    }
+
+    def "it can verify a given expired JWT"() {
+        given: "An invalid JWT"
+        String token = createExpiredJWT(new AuthenticatedUser("User", "Password", 1L))
+
+        when: "the controller is asked to verify it"
+        ResultActions request = mockMvc.perform(post("/users/verify")
+                .param("token", token))
+
+        then: "the JWT is considered valid by the controller"
+        request.andExpect(status().isUnauthorized())
+    }
+
+    private static String createExpiredJWT(AuthenticatedUser user) {
+        Algorithm tokenEncryptionAlgorithm = Algorithm.HMAC256("testsecret")
+        Calendar calendar = Calendar.getInstance()
+        calendar.setTime(new Date())
+        calendar.add(Calendar.DATE, -1)
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(calendar.getTime())
+                .sign(tokenEncryptionAlgorithm)
     }
 }

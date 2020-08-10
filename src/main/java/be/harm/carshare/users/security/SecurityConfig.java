@@ -32,6 +32,7 @@ class SecurityConfig {
     static class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         private static final String H2CONSOLE_LOCATION = "/h2-console/**";
         private static final String LOGIN_URL = "/login";
+        private static final String VERIFY_URL = "/users/verify";
         private static final String REGISTER_URL = "/users";
 
         private final UserDetailsService userDetailsService;
@@ -54,6 +55,7 @@ class SecurityConfig {
                     .antMatchers(H2CONSOLE_LOCATION).permitAll()
                     .antMatchers(HttpMethod.POST, REGISTER_URL).permitAll()
                     .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+                    .antMatchers(HttpMethod.POST, VERIFY_URL).permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .addFilter(new JwtAuthenticationFilter(authenticationManager(), tokenService))
